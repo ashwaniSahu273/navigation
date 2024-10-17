@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:movie_app/Providers/movie_model.dart';
-import 'package:movie_app/Widgets/movie_details.dart';
+import 'package:movie_app/Providers/movie_provider.dart';
+import 'package:movie_app/Widgets/movie_card.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -34,13 +34,18 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+   
+  void initState(){
+    Provider.of<MovieProvider>(context,listen:false).loadMovies(context);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     final movieProvider = Provider.of<MovieProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title:const Text(
           "Movies",
           style: TextStyle(color: Colors.white),
         ),
@@ -50,54 +55,7 @@ class _HomeState extends State<Home> {
         child: ListView.builder(
           itemCount: movieProvider.movieList.length,
           itemBuilder: (context, index) {
-            return Card(
-              margin: EdgeInsets.all(10),
-              child: ExpansionTile(
-                title: Text(movieProvider.movieList[index]),
-                subtitle: Text("Director : mohan kumar"),
-                leading: CircleAvatar(
-                  child: Text(movieProvider.movieList[index].substring(0, 1)),
-                ),
-                children: [
-                  Container(
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.only(left: 75),
-                    child: Column(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RichText(
-                            text: TextSpan(children: [
-                          TextSpan(
-                              text: "Released : ",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelLarge
-                                  ?.copyWith(fontWeight: FontWeight.bold)),
-                          const TextSpan(
-                              text: "24th oct 2004\n",
-                              style: TextStyle(color: Colors.black)),
-                          TextSpan(
-                              text: "Plot: ",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelLarge
-                                  ?.copyWith(fontWeight: FontWeight.bold)),
-                          const TextSpan(
-                              text:
-                                  "This is a text this is a text text text textThis is a text this is a text text text textThis is a text this is a text text text textThis is a text this is a text text text text",
-                              style: TextStyle(color: Colors.black))
-                        ]
-                        )
-                        ),
-                        TextButton(onPressed: (){
-                          Navigator.push(context,MaterialPageRoute(builder: (context)=>MovieDetails()));
-                        }, child: Text("Read More", style: TextStyle(color: Colors.blue),))
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            );
+            return MovieCard(movie: movieProvider.movieList[index]);
 
             // ListTile(
             //   title: Text(movieProvider.movieList[index]),
